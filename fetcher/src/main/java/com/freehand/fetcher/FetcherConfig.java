@@ -1,8 +1,6 @@
 package com.freehand.fetcher;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,22 +9,31 @@ import java.util.Set;
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
 public class FetcherConfig {
-    private Set<IResponseInterceptor> interceptorList;
     private static final FetcherConfig ourInstance = new FetcherConfig();
-
-    public static FetcherConfig getInstance() {
-        return ourInstance;
-    }
+    private Set<IResponseInterceptor> interceptorList;
+    private FetcherErrorCallback errorCallback;
 
     private FetcherConfig() {
         interceptorList = new HashSet<>();
     }
 
-    public void addDefaultReponseInterceptor(IResponseInterceptor interceptor){
+    public static FetcherConfig getInstance() {
+        return ourInstance;
+    }
+
+    public void addDefaultReponseInterceptor(IResponseInterceptor interceptor) {
         interceptorList.add(interceptor);
     }
 
     public Set<IResponseInterceptor> getInterceptorList() {
         return interceptorList;
+    }
+
+    public void addErrorHandle(FetcherErrorCallback callback) {
+        this.errorCallback = callback;
+    }
+
+    public FetcherErrorCallback getErrorCallback() {
+        return errorCallback;
     }
 }

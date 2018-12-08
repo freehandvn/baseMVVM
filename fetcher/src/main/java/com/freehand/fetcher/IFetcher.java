@@ -10,13 +10,6 @@ import io.reactivex.Scheduler;
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
 public interface IFetcher<T> {
-    /**
-     * [optional] add api factory, define the way get api
-     *
-     * @param factory
-     * @return
-     */
-    IFetcher<T> addAPIFactory(IApiFactory<T> factory);
 
     /**
      * [optional] add callback process with response like store update ...

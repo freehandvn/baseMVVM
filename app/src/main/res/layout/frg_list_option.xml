@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.freehand.sample.ListOptionVM" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:onClick="@{vm::onOffline}"
+            android:text="Offline" />
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:onClick="@{vm::onFetcher}"
+            android:text="Fetcher" />
+
+    </LinearLayout>
+</layout>

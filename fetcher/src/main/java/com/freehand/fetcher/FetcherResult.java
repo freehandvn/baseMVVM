@@ -7,7 +7,10 @@ package com.freehand.fetcher;
  */
 public class FetcherResult<T> {
     private T result;
-    private Throwable error;
+    private Throwable error = null;
+
+    public FetcherResult() {
+    }
 
     public FetcherResult(T result) {
         this.result = result;
@@ -15,5 +18,17 @@ public class FetcherResult<T> {
 
     public FetcherResult(Throwable error) {
         this.error = error;
+    }
+
+    public T getResult() {
+        return result;
+    }
+
+    public Throwable getError() {
+        return error;
+    }
+
+    public boolean isSuccess() {
+        return error == null;
     }
 }

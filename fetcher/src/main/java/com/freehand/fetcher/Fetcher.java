@@ -1,18 +1,16 @@
 package com.freehand.fetcher;
 
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
+import retrofit2.Response;
 
 /**
  * Created by minhpham on 11/29/18.
@@ -20,32 +18,17 @@ import io.reactivex.subjects.PublishSubject;
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
 public class Fetcher<T> implements IFetcher<T> {
-    private List<IApiFactory<T>> factories;
     private Set<IResponseInterceptor> interceptors;
-    private PublishSubject<FetcherResult<T>> output;
+    protected PublishSubject<FetcherResult<T>> output;
     private Scheduler subscribeOnScheduler = Schedulers.io();
     private Scheduler observeOnScheduler = AndroidSchedulers.mainThread();
     private Disposable disposal;
 
     public Fetcher() {
-        factories = new ArrayList<>();
         interceptors = new HashSet<>(FetcherConfig.getInstance().getInterceptorList());
         output = PublishSubject.create();
     }
 
-    /**
-     * [optional] add api factory, define the way get api
-     *
-     * @param factory
-     * @return
-     */
-    @Override
-    public IFetcher<T> addAPIFactory(IApiFactory<T> factory) {
-        if (factory != null) {
-            this.factories.add(factory);
-        }
-        return this;
-    }
 
     /**
      * [optional] add callback process with response like store update ...
@@ -122,21 +105,13 @@ public class Fetcher<T> implements IFetcher<T> {
         cancel();
         output.onComplete();
         output = null;
-        factories.clear();
-        factories = null;
         interceptors.clear();
         interceptors = null;
     }
 
     private Observable<T> getExecuteObservable(Observable<T> inputApi) {
         Observable<T> api = inputApi;
-        if (factories.size() > 0) {
-            for (IApiFactory<T> factory : factories) {
-                if (api == null) api = factory.getApi();
-                else api = api.concatWith(factory.getApi());
-            }
-        }
-        if(api == null) return Observable.empty();
+        if (api == null) return Observable.empty();
 
         if (interceptors.size() > 0) {
             for (IResponseInterceptor interceptor : interceptors) {
@@ -147,16 +122,22 @@ public class Fetcher<T> implements IFetcher<T> {
                 }
             }
         }
-        return api.doOnNext(new Consumer<T>() {
-            @Override
-            public void accept(T t) {
+        return api.doOnNext(t -> {
+            if (shouldReturnResponse())
                 output.onNext(new FetcherResult<>(t));
-            }
-        }).doOnError(new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) {
-                output.onNext(new FetcherResult<T>(throwable));
-            }
-        });
+            if (FetcherConfig.getInstance().getErrorCallback() == null) return;
+            if (!(t instanceof Response)) return;
+            if (((Response) t).isSuccessful()) return;
+            FetcherConfig.getInstance().getErrorCallback().onError(((Response) t).code(), ((Response) t).message());
+        })
+                .doOnError(throwable -> {
+                    output.onNext(new FetcherResult<>(throwable));
+                    if (FetcherConfig.getInstance().getErrorCallback() == null) return;
+                    FetcherConfig.getInstance().getErrorCallback().onError(throwable);
+                });
+    }
+
+    protected boolean shouldReturnResponse() {
+        return true;
     }
 }

@@ -2,6 +2,7 @@ package com.freehand.base_component.core.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -70,7 +71,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(!stackMap.containsKey(currentMenu)) stackMap.put(currentMenu,new Stack<Fragment>());
         stackMap.get(currentMenu).push(fragment);
     }
-
     public void pushFragment(final Fragment fragment, final boolean shouldAdd) {
         CodeUtils.runOnMainThread(new Action() {
             @Override

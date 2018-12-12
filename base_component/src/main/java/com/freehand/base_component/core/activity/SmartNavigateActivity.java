@@ -23,7 +23,7 @@ public abstract class SmartNavigateActivity extends BaseDrawerActivity {
 //        // when pop stack getSupportFragmentManager() return list with size and real items not match
 //        // we need to create new list with size and real item matched
 //        for (int i = 0; i < frgs.size(); i++) {
-//            Fragment frg = frgs.get(i);
+//            Fragment frg = frgs.application(i);
 //            if (frg != null && frg instanceof Fragment) {
 //                reals.add(frg.getTag());
 //            }
@@ -33,7 +33,7 @@ public abstract class SmartNavigateActivity extends BaseDrawerActivity {
 //        //if size <=2 not show quick navigate
 //        if (reals == null || reals.size() <= 2) return false;
 //
-//        PopupMenu menu = QuickDialog.createPopupMenu(v, new PopupMenu.OnMenuItemClickListener() {
+//        PopupMenu menu = DialogUtils.createPopupMenu(v, new PopupMenu.OnMenuItemClickListener() {
 //            @Override
 //            public boolean onMenuItemClick(MenuItem item) {
 //                //remove current fragment

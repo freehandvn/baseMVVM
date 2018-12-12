@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -157,7 +158,7 @@ public class CodeUtils {
     @SuppressLint("LongLogTag")
     public static Object getFieldThroughGetterAsStringTransform(Object target, String property) {
         try {
-            Method method = target.getClass().getMethod("get" + property.substring(0, 1).toUpperCase() + property.substring(1));
+            Method method = target.getClass().getMethod("application" + property.substring(0, 1).toUpperCase() + property.substring(1));
             Object getResult = method.invoke(target);
             return getResult;
         } catch (Exception e) {
@@ -236,25 +237,17 @@ public class CodeUtils {
     }
 
     public static Observable<String> createTextChangeObservable(final EditText mQueryEditText) {
-        Observable<String> textChangeObservable = Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(final ObservableEmitter<String> emitter) throws Exception {
-                final TextWatcher watcher = new SimpleTextWatcher() {
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        emitter.onNext(s.toString());
-                    }
-                };
+        Observable<String> textChangeObservable = Observable.create(emitter -> {
+            final TextWatcher watcher = new SimpleTextWatcher() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    emitter.onNext(s.toString());
+                }
+            };
 
-                mQueryEditText.addTextChangedListener(watcher);
+            mQueryEditText.addTextChangedListener(watcher);
 
-                emitter.setCancellable(new io.reactivex.functions.Cancellable() {
-                    @Override
-                    public void cancel() throws Exception {
-                        mQueryEditText.removeTextChangedListener(watcher);
-                    }
-                });
-            }
+            emitter.setCancellable(() -> mQueryEditText.removeTextChangedListener(watcher));
         });
 
         return textChangeObservable;
@@ -319,5 +312,11 @@ public class CodeUtils {
 
     public static void runOnMainThread(Action action) {
         Completable.fromAction(action).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe();
+    }
+
+    public static Activity fromContext(@NonNull Context context){
+        if(context instanceof Activity) return (Activity) context;
+        if(context instanceof ContextWrapper) return fromContext(((ContextWrapper) context).getBaseContext());
+        return null;
     }
 }

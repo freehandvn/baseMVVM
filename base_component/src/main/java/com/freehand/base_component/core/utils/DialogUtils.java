@@ -13,7 +13,7 @@ import java.util.List;
  * Purpose: quick helper show loading or popup menu
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
-public class QuickDialog {
+public class DialogUtils {
     static private ProgressDialog progressDialog;
 
     /**

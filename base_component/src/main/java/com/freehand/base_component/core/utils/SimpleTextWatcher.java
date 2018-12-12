@@ -31,7 +31,7 @@ public abstract class SimpleTextWatcher implements TextWatcher {
      * This method is called to notify you that, somewhere within
      * <code>s</code>, the text has been changed.
      * It is legitimate to make further changes to <code>s</code> from
-     * this callback, but be careful not to get yourself into an infinite
+     * this callback, but be careful not to application yourself into an infinite
      * loop, because any changes you make will cause this method to be
      * called again recursively.
      * (You are not told where the change took place because other

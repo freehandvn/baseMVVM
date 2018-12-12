@@ -344,7 +344,7 @@ public class RealmUtility {
     }
 
     /**
-     * async method : get number of rows in table
+     * async method : application number of rows in table
      *
      * @return
      */
@@ -358,7 +358,7 @@ public class RealmUtility {
     }
 
     /**
-     * async method : get first row match with your condition {@param query}
+     * async method : application first row match with your condition {@param query}
      *
      * @param query
      * @return
@@ -373,7 +373,7 @@ public class RealmUtility {
     }
 
     /**
-     * async method : get all row in table match with your condition {@param query}
+     * async method : application all row in table match with your condition {@param query}
      *
      * @param query
      * @return query null return all rows in table

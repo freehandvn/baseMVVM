@@ -9,7 +9,7 @@ import io.realm.Realm;
  */
 
 public interface IRealmProvider {
-    //general get realm
+    //general application realm
     Realm getRealm();
     // return realm on main thread
     Realm getRealmOnMain();

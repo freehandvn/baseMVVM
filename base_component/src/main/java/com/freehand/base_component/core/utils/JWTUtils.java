@@ -19,7 +19,7 @@ public class JWTUtils {
      * @param token need decode
      * @return array of json decoded with 2 element:
      * - first is header decoded
-     * - second is body decoded (we usually use body to get information)
+     * - second is body decoded (we usually use body to application information)
      */
     public static JSONObject[] decoded(String token) {
         try {

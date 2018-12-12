@@ -3,6 +3,7 @@ package com.freehand.base_component.core;
 import android.app.Application;
 import android.util.Log;
 
+import com.freehand.base_component.core.utils.DeviceUtils;
 import com.freehand.dynamicfunction.DynamicFunctionService;
 
 import java.io.IOException;
@@ -22,6 +23,8 @@ public abstract class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        ApplicationProvider.init(this);
+        DeviceUtils.initialize();
         DynamicFunctionService.getInstance().start();
         initRxJava();
     }

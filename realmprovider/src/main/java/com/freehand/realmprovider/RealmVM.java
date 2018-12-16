@@ -1,7 +1,7 @@
 package com.freehand.realmprovider;
 
 import com.freehand.base_component.core.view_model.BaseViewModel;
-import com.freehand.base_component.core.view_model.IViewModel;
+import com.freehand.base_component.core.inteface.IViewModel;
 
 import io.realm.Realm;
 
@@ -10,7 +10,7 @@ import io.realm.Realm;
  * Purpose:
  * Copyright © 2017 Pham Duy Minh. All rights reserved.
  */
-public abstract class RealmVM extends BaseViewModel{
+public abstract class RealmVM extends BaseViewModel implements IRealmVM{
     private Realm mRealm;
 
     public RealmVM(IViewModel... models) {
@@ -29,6 +29,7 @@ public abstract class RealmVM extends BaseViewModel{
 //        }
     }
 
+    @Override
     public Realm getRealm() {
         if (mRealm == null) {
             mRealm = RealmUtility.realmProvider.getRealmOnMain();

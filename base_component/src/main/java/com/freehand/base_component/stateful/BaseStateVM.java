@@ -1,10 +1,7 @@
 package com.freehand.base_component.stateful;
 
-import android.databinding.BindingAdapter;
-import android.view.View;
-
 import com.freehand.base_component.core.view_model.BaseViewModel;
-import com.freehand.base_component.core.view_model.IViewModel;
+import com.freehand.base_component.core.inteface.IViewModel;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;

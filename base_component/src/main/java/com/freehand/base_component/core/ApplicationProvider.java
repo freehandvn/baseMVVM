@@ -1,6 +1,6 @@
 package com.freehand.base_component.core;
 
-import android.app.Application;
+import android.app.Activity;
 
 /**
  * Created by minhpham on 12/12/18.
@@ -17,4 +17,10 @@ public class ApplicationProvider {
     public static BaseApplication application() {
         return application;
     }
+
+    public static Activity activity() {
+        return application.getActivity();
+    }
+
+
 }

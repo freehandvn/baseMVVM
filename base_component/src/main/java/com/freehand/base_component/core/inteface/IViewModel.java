@@ -1,11 +1,9 @@
-package com.freehand.base_component.core.view_model;
+package com.freehand.base_component.core.inteface;
 
 import android.content.Intent;
 import android.content.res.Configuration;
 
 import java.util.List;
-
-import io.reactivex.disposables.Disposable;
 
 /**
  * Created by minhpham on 4/25/17.

@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.databinding.BaseObservable;
 import android.util.Log;
 
+import com.freehand.base_component.core.inteface.IViewModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

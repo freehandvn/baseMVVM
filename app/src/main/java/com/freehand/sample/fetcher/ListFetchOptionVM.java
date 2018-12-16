@@ -1,4 +1,4 @@
-package com.freehand.sample;
+package com.freehand.sample.fetcher;
 
 import android.util.Log;
 import android.view.View;

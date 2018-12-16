@@ -1,4 +1,4 @@
-package com.freehand.base_component.core.view_model;
+package com.freehand.base_component.core.inteface;
 
 /**
  * Created by minhpham on 8/21/18.

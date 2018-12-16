@@ -1,8 +1,6 @@
 package com.freehand.base_component.core.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,7 +8,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.freehand.base_component.core.fragment.BaseFragment;
+import com.freehand.base_component.core.navigate.INavigator;
+import com.freehand.base_component.core.navigate.Navigate;
 import com.freehand.base_component.core.utils.CodeUtils;
+import com.freehand.dynamicfunction.SafeObserver;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private Map<Integer, Stack<Fragment>> stackMap = new HashMap<>();
     private int currentMenu = 0;
     private boolean isBackground;
+    private SafeObserver<INavigator> navigateDispose;
 
 
     protected abstract int getFragmentContainerResId();
@@ -38,6 +40,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(defineLayout());
         initView();
+        listenerNavigate();
+    }
+
+    private void listenerNavigate() {
+        navigateDispose = Navigate.getInstance().getChannel().subscribeWith(new SafeObserver<INavigator>() {
+            @Override
+            public boolean accept(INavigator navigator) {
+                if (isFinishing()) return true;
+                pushFragment(navigator);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -64,13 +78,26 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         clearAll();
+        if (navigateDispose != null) {
+            navigateDispose.dispose();
+            navigateDispose = null;
+        }
         super.onDestroy();
     }
 
-    protected void add2BackStack(Fragment fragment){
-        if(!stackMap.containsKey(currentMenu)) stackMap.put(currentMenu,new Stack<Fragment>());
+    protected void add2BackStack(Fragment fragment) {
+        if (!stackMap.containsKey(currentMenu)) stackMap.put(currentMenu, new Stack<Fragment>());
         stackMap.get(currentMenu).push(fragment);
     }
+
+    protected void replaceFromBackStack(Fragment fragment) {
+        if (!stackMap.containsKey(currentMenu)) stackMap.put(currentMenu, new Stack<Fragment>());
+        if (stackMap.get(currentMenu).size() >= 1) {
+            stackMap.get(currentMenu).pop();
+        }
+        stackMap.get(currentMenu).push(fragment);
+    }
+
     public void pushFragment(final Fragment fragment, final boolean shouldAdd) {
         CodeUtils.runOnMainThread(new Action() {
             @Override
@@ -88,6 +115,32 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                 }
                 ft.add(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
+                ft.commitAllowingStateLoss();
+//                manager.executePendingTransactions();
+                if (fragment instanceof BaseFragment) {
+                    ((BaseFragment) fragment).onBecomeVisible();
+                }
+            }
+        });
+    }
+
+    public void replaceFragment(final Fragment fragment, final boolean shouldAdd) {
+        CodeUtils.runOnMainThread(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (shouldAdd) {
+                    replaceFromBackStack(fragment);
+                }
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction ft = manager.beginTransaction();
+                Fragment currentFragment = getCurrentFragment();
+                if (currentFragment != null) {
+                    ft.hide(currentFragment);
+                    if (currentFragment instanceof BaseFragment) {
+                        ((BaseFragment) currentFragment).onBecomeInvisible();
+                    }
+                }
+                ft.replace(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
                 ft.commitAllowingStateLoss();
 //                manager.executePendingTransactions();
                 if (fragment instanceof BaseFragment) {
@@ -116,6 +169,47 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
+    public void pushFragment(INavigator navigator) {
+        if (navigator.getFragment() == null || navigator.getStrategy() == Navigate.Strategy.POP)
+            return;
+        CodeUtils.runOnMainThread(() -> {
+            BaseFragment fragment = navigator.getFragment();
+            if (navigator.shouldAddToBackStack()) {
+                if (navigator.getStrategy() == Navigate.Strategy.REPLACE) {
+                    replaceFromBackStack(fragment);
+                } else {
+                    add2BackStack(fragment);
+                }
+            }
+
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction ft = manager.beginTransaction();
+            navigator.setCustomAnimation(ft);
+
+            if (navigator.getStrategy() != Navigate.Strategy.OVERLAP) {
+                Fragment currentFragment = getCurrentFragment();
+                if (currentFragment != null) {
+                    ft.hide(currentFragment);
+                    if (currentFragment instanceof BaseFragment) {
+                        ((BaseFragment) currentFragment).onBecomeInvisible();
+                    }
+                }
+            }
+
+            if (navigator.getStrategy() == Navigate.Strategy.REPLACE) {
+                ft.replace(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
+            } else {
+                ft.add(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
+            }
+
+            ft.commitAllowingStateLoss();
+//                manager.executePendingTransactions();
+            if (fragment instanceof BaseFragment) {
+                fragment.onBecomeVisible();
+            }
+        });
+    }
+
     public void pushFragmentNonReplace(Fragment fragment) {
         add2BackStack(fragment);
     }
@@ -125,7 +219,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void run() throws Exception {
                 final Stack<Fragment> stackFragment = stackMap.get(currentMenu);
-                if (stackFragment!=null && stackFragment.size() > 1) {
+                if (stackFragment != null && stackFragment.size() > 1) {
                     final Fragment fragment = stackFragment.elementAt(stackFragment.size() - 2);
                     stackFragment.pop();
                     FragmentManager manager = getSupportFragmentManager();
@@ -204,7 +298,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public Fragment getLastFragmentInStack() {
         Stack<Fragment> stack = stackMap.get(currentMenu);
-        if (stack==null || stack.size() == 0) {
+        if (stack == null || stack.size() == 0) {
             return null;
         }
         return stack.lastElement();
@@ -217,7 +311,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Stack<Fragment> stack = stackMap.get(currentMenu);
-        if (stack!=null&& stack.size() <= 1) {
+        if (stack != null && stack.size() <= 1) {
             if (!handleExitActivity())
                 super.onBackPressed(); // or call finish..
         } else {
@@ -262,7 +356,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public Fragment getBeforeCurrentFragment() {
         Stack<Fragment> stack = stackMap.get(currentMenu);
-        if(stack==null) return null;
+        if (stack == null) return null;
         return stack.get(stack.size() - 2);
     }
 
@@ -302,8 +396,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * Removes a fragment by class name out of the current stack and UI as well.
      *
-     * @param fragmentClass
-     *         the class of fragment.
+     * @param fragmentClass the class of fragment.
      */
     public void removeFragmentOutOfStack(Class fragmentClass) {
         Stack<Fragment> fragments = getFragmentsInCurrentMenu();

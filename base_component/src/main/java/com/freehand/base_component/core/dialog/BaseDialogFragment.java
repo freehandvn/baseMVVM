@@ -1,5 +1,6 @@
 package com.freehand.base_component.core.dialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
@@ -17,24 +18,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.freehand.base_component.core.ApplicationProvider;
+import com.freehand.base_component.core.activity.BaseActivity;
+import com.freehand.base_component.core.inteface.IDialog;
+import com.freehand.base_component.core.inteface.IDialogCallback;
+import com.freehand.base_component.core.inteface.IDialogVM;
 import com.freehand.base_component.core.utils.CodeUtils;
 import com.freehand.base_component.core.utils.DeviceUtils;
 import com.freehand.base_component.core.utils.KeyboardUtil;
 import com.freehand.base_component.core.utils.ViewUtils;
 import com.freehand.base_component.core.view_model.BaseViewModel;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
 
 /**
- * Created by namhoainguyen on 8/16/17.
+ * Created by minhpham on 12/13/18.
+ * Purpose: base of dialog
+ * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
-
-public abstract class BaseDialogFragment<T extends BaseViewModel> extends DialogFragment {
+public abstract class BaseDialogFragment<T extends BaseViewModel & IDialogVM<O>, O> extends DialogFragment implements IDialogCallback, IDialog<O> {
 
     private static final String TAG = BaseDialogFragment.class.getSimpleName();
     protected T viewModel;
     protected ViewDataBinding dataBinding;
-    private KeyboardUtil keyboardUtil;
+    protected KeyboardUtil keyboardUtil;
+    protected PublishSubject<O> resultChannel = PublishSubject.create();
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,18 +139,17 @@ public abstract class BaseDialogFragment<T extends BaseViewModel> extends Dialog
     public void onAttach(Context context) {
         super.onAttach(context);
         viewModel = defineViewModel();
+        viewModel.setDismissCallback(this);
+        viewModel.setOuputChannel(resultChannel);
         CodeUtils.hideKeyboard(CodeUtils.fromContext(context));
     }
 
     @Override
     public void onDetach() {
+        resultChannel.onComplete();
+        resultChannel = null;
         viewModel.destroy();
-        ViewUtils.postDelay(new Runnable() {
-            @Override
-            public void run() {
-                CodeUtils.hideKeyboard(getActivity());
-            }
-        }, 100);
+        ViewUtils.postDelay(() -> CodeUtils.hideKeyboard(getActivity()), 100);
         super.onDetach();
     }
 
@@ -160,6 +171,22 @@ public abstract class BaseDialogFragment<T extends BaseViewModel> extends Dialog
             }
         }
     }
+
+    @Override
+    public void onDismiss() {
+        dismiss();
+    }
+
+    @Override
+    public Observable<O> show() {
+        Activity activity = ApplicationProvider.activity();
+        if(activity instanceof BaseActivity){
+            show(((BaseActivity)activity).getSupportFragmentManager(),defineDialogTag());
+        }
+        return resultChannel.doOnDispose(() -> dismiss());
+    }
+
+    protected abstract String defineDialogTag();
 
     public T getViewModel() {
         return viewModel;

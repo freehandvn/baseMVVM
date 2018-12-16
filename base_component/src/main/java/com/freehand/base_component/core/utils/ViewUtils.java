@@ -78,10 +78,6 @@ public final class ViewUtils {
         return application().getResources().getStringArray(stringId);
     }
 
-    public static String getString(@StringRes int stringId, Object... objects) {
-        return application().getString(stringId, objects);
-    }
-
     public static String getQuantityString(@PluralsRes int stringId, int quantity, Object... objects) {
         return application().getResources().getQuantityString(stringId, quantity, objects);
     }
@@ -95,7 +91,7 @@ public final class ViewUtils {
     }
 
     public static void setFont(@StringRes int stringId, TextView... textViews) {
-        setFont(getString(stringId,textViews));
+        setFont(getString(stringId),textViews);
     }
 
     public static void setFont(String fontPath, TextView... textViews) {

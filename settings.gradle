@@ -1,1 +1,1 @@
-include ':app', ':base_component', ':fetcher', ':realmprovider', ':dynamicfunction', ':oauth2'
+include ':app', ':base_component', ':fetcher', ':base_realm', ':dynamicfunction', ':oauth2'

@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.freehand.base_component.core.fragment.BaseFragment;
 import com.freehand.base_component.core.navigate.INavigator;
-import com.freehand.base_component.core.navigate.Navigate;
+import com.freehand.base_component.core.navigate.NavigateManager;
 import com.freehand.base_component.core.utils.CodeUtils;
 import com.freehand.dynamicfunction.SafeObserver;
 
@@ -38,17 +38,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        listenerNavigate();
         setContentView(defineLayout());
         initView();
-        listenerNavigate();
     }
 
     private void listenerNavigate() {
-        navigateDispose = Navigate.getInstance().getChannel().subscribeWith(new SafeObserver<INavigator>() {
+        navigateDispose = NavigateManager.instance().getChannel().subscribeWith(new SafeObserver<INavigator>() {
             @Override
             public boolean accept(INavigator navigator) {
                 if (isFinishing()) return true;
-                pushFragment(navigator);
+                onNavigate(navigator);
                 return false;
             }
         });
@@ -98,7 +98,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         stackMap.get(currentMenu).push(fragment);
     }
 
-    public void pushFragment(final Fragment fragment, final boolean shouldAdd) {
+    protected void pushFrg(final Fragment fragment, final boolean shouldAdd) {
         CodeUtils.runOnMainThread(new Action() {
             @Override
             public void run() throws Exception {
@@ -124,58 +124,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public void replaceFragment(final Fragment fragment, final boolean shouldAdd) {
-        CodeUtils.runOnMainThread(new Action() {
-            @Override
-            public void run() throws Exception {
-                if (shouldAdd) {
-                    replaceFromBackStack(fragment);
-                }
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction ft = manager.beginTransaction();
-                Fragment currentFragment = getCurrentFragment();
-                if (currentFragment != null) {
-                    ft.hide(currentFragment);
-                    if (currentFragment instanceof BaseFragment) {
-                        ((BaseFragment) currentFragment).onBecomeInvisible();
-                    }
-                }
-                ft.replace(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
-                ft.commitAllowingStateLoss();
-//                manager.executePendingTransactions();
-                if (fragment instanceof BaseFragment) {
-                    ((BaseFragment) fragment).onBecomeVisible();
-                }
-            }
-        });
-    }
-
-    public void pushFragmentWithoutHidingCurrent(final Fragment fragment, final boolean shouldAdd) {
-        CodeUtils.runOnMainThread(new Action() {
-            @Override
-            public void run() throws Exception {
-                if (shouldAdd) {
-                    add2BackStack(fragment);
-                }
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction ft = manager.beginTransaction();
-                ft.add(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
-                ft.commitAllowingStateLoss();
-                manager.executePendingTransactions();
-                if (fragment instanceof BaseFragment) {
-                    ((BaseFragment) fragment).onBecomeVisible();
-                }
-            }
-        });
-    }
-
-    public void pushFragment(INavigator navigator) {
-        if (navigator.getFragment() == null || navigator.getStrategy() == Navigate.Strategy.POP)
+    public void onNavigate(INavigator navigator) {
+        if(navigator.getStrategy() == INavigator.Strategy.NONE){
             return;
+        }
+        if(navigator.getStrategy() == INavigator.Strategy.POP){
+            popFragment();
+            return;
+        }
+        if(navigator.getStrategy() == INavigator.Strategy.CUSTOM){
+            navigator.onCustomNavigate(this);
+            return;
+        }
+        if (navigator.getFragment() == null) return;
         CodeUtils.runOnMainThread(() -> {
             BaseFragment fragment = navigator.getFragment();
             if (navigator.shouldAddToBackStack()) {
-                if (navigator.getStrategy() == Navigate.Strategy.REPLACE) {
+                if (navigator.getStrategy() == INavigator.Strategy.REPLACE) {
                     replaceFromBackStack(fragment);
                 } else {
                     add2BackStack(fragment);
@@ -184,9 +149,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction ft = manager.beginTransaction();
-            navigator.setCustomAnimation(ft);
+            navigator.setCustomTransaction(ft);
 
-            if (navigator.getStrategy() != Navigate.Strategy.OVERLAP) {
+            if (navigator.getStrategy() != INavigator.Strategy.OVERLAP) {
                 Fragment currentFragment = getCurrentFragment();
                 if (currentFragment != null) {
                     ft.hide(currentFragment);
@@ -196,7 +161,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             }
 
-            if (navigator.getStrategy() == Navigate.Strategy.REPLACE) {
+            if (navigator.getStrategy() == INavigator.Strategy.REPLACE) {
                 ft.replace(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
             } else {
                 ft.add(getFragmentContainerResId(), fragment, fragment.getClass().getSimpleName());
@@ -210,9 +175,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public void pushFragmentNonReplace(Fragment fragment) {
-        add2BackStack(fragment);
-    }
 
     public void popFragment() {
         CodeUtils.runOnMainThread(new Action() {
@@ -279,7 +241,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         clearFragmentsInCurrentStack();
         setCurrentMenu(newMenuType);
-        pushFragment(newFragment, true);
+        pushFrg(newFragment, true);
     }
 
     /**

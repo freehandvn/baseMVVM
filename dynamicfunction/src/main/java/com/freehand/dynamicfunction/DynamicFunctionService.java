@@ -16,7 +16,9 @@ import io.reactivex.subjects.PublishSubject;
  */
 
 public class DynamicFunctionService {
+    private static final String TAG = DynamicFunctionService.class.getSimpleName();
     private static final DynamicFunctionService ourInstance = new DynamicFunctionService();
+    private static boolean canLog = false;
     private PublishSubject<IFunction> service;
     private List<IFunction> buffer;
 
@@ -28,26 +30,36 @@ public class DynamicFunctionService {
         return ourInstance;
     }
 
+    public static void enableLog(boolean enable){
+        canLog = enable;
+    }
+
     public void start() {
         if (service != null && !service.hasComplete()) {
             service.onComplete();
         }
         service = PublishSubject.create();
+        log("Start "+TAG);
     }
 
 
     public void notifyFunctionInit(IFunction function) {
         if (service == null || service.hasComplete()) {
-            Log.e("DynamicFunctionService", "service has destroy, can not notify this functon");
+                log("service has destroy, can not notify this functon");
             return;
         }
-//        Log.e("DynamicFunctionService", "add func: "+ function.getName());
+        log("init func: "+ function.getName()+"--- buffer size: "+buffer.size());
         this.buffer.add(function);
         service.onNext(function);
     }
 
+    private void log(String s) {
+        if(!canLog) return;
+        Log.d(TAG,s);
+    }
+
     public void notifyFunctionDestroy(IFunction function) {
-//        Log.e("DynamicFunctionService", "remove func: "+ function.getName());
+        log("destroy func: "+ function.getName()+"--- buffer size: "+buffer.size());
         this.buffer.remove(function);
     }
 
@@ -60,7 +72,6 @@ public class DynamicFunctionService {
         return null;
     }
 
-    //HashMap is thread-safe => no need synchronize on this method
     public void subscribe(ISubscriber<IFunction> consumer) {
 
         if (service == null || service.hasComplete() || consumer == null) return;
@@ -74,6 +85,8 @@ public class DynamicFunctionService {
     }
 
     public void stop() {
+
+        log("Stop "+TAG);
         if (service == null) return;
         service.onComplete();
         if (buffer != null && buffer.size() > 0) {

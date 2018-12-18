@@ -2,6 +2,7 @@ package com.freehand.base_component.core.navigate;
 
 import android.support.v4.app.FragmentTransaction;
 
+import com.freehand.base_component.core.activity.BaseActivity;
 import com.freehand.base_component.core.fragment.BaseFragment;
 
 /**
@@ -13,9 +14,13 @@ public interface INavigator {
 
     BaseFragment getFragment();
 
-    Navigate.Strategy getStrategy();
+    Strategy getStrategy();
 
     boolean shouldAddToBackStack();
 
-    void setCustomAnimation(FragmentTransaction ft);
+    void setCustomTransaction(FragmentTransaction ft);
+
+    void onCustomNavigate(BaseActivity activity);
+
+    enum Strategy {NONE, ADD, REPLACE, OVERLAP, POP, CUSTOM}
 }

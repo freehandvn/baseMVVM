@@ -1,10 +1,10 @@
 package com.freehand.sample;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
-import com.freehand.base_component.core.activity.BaseActivity;
+import com.freehand.base_component.core.navigate.NavigateManager;
+import com.freehand.base_component.core.navigate.Navigator;
 import com.freehand.dynamicfunction.SafeObserver;
 import com.freehand.realmprovider.RealmVM;
 import com.freehand.sample.dialog.SampleDialog;
@@ -18,20 +18,14 @@ import com.freehand.sample.fetcher.FrgFetcher;
 public class ListOptionVM extends RealmVM {
 
     public void onOffline(View v) {
-        Context context = v.getContext();
-        if(context instanceof BaseActivity){
-            ((BaseActivity) context).pushFragment(new FrgOffline(),true);
-        }
+        NavigateManager.navigate(Navigator.make().fragment(FrgOffline.class).enableBack());
     }
 
     public void onFetcher(View v) {
-        Context context = v.getContext();
-        if(context instanceof BaseActivity){
-            ((BaseActivity) context).pushFragment(new FrgFetcher(),true);
-        }
+        NavigateManager.navigate(Navigator.make().fragment(FrgFetcher.class).enableBack());
     }
 
-    public void onDialog(View v){
+    public void onDialog(View v) {
         SampleDialog dialog = new SampleDialog();
         dialog.show().subscribeWith(new SafeObserver<String>() {
             /**
@@ -40,7 +34,7 @@ public class ListOptionVM extends RealmVM {
              */
             @Override
             public boolean accept(String value) {
-                Log.d("minh", "accept: "+value);
+                Log.d("minh", "accept: " + value);
                 return true;
             }
         });

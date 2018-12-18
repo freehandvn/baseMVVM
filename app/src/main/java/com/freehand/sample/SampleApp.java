@@ -1,5 +1,6 @@
 package com.freehand.sample;
 
+import com.freehand.dynamicfunction.DynamicFunctionService;
 import com.freehand.fetcher.FetcherConfig;
 import com.freehand.realmprovider.RealmApplication;
 import com.freehand.realmprovider.RealmProvider;
@@ -17,5 +18,6 @@ public class SampleApp extends RealmApplication {
         super.onCreate();
         RealmUtility.realmProvider = new RealmProvider(this,"SampleDB");
         FetcherConfig.getInstance().addDefaultReponseInterceptor(new StoreInterceptor());
+        DynamicFunctionService.enableLog(true);
     }
 }

@@ -1,6 +1,8 @@
 package com.freehand.sample;
 
 import com.freehand.base_component.core.activity.BaseActivity;
+import com.freehand.base_component.core.navigate.NavigateManager;
+import com.freehand.base_component.core.navigate.Navigator;
 
 public class MainActivity extends BaseActivity {
 
@@ -11,7 +13,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        pushFragment(new FrgOption(), true);
+        NavigateManager.navigate(Navigator.make().fragment(FrgOption.class).enableBack());
     }
 
     @Override

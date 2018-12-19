@@ -44,7 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void listenerNavigate() {
-        navigateDispose = NavigateManager.instance().getChannel().subscribeWith(new SafeObserver<INavigator>() {
+        navigateDispose = NavigateManager.getChannel().subscribeWith(new SafeObserver<INavigator>() {
             @Override
             public boolean accept(INavigator navigator) {
                 if (isFinishing()) return true;
@@ -125,15 +125,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void onNavigate(INavigator navigator) {
-        if(navigator.getStrategy() == INavigator.Strategy.NONE){
+        navigator.onCustomNavigate(this);
+        if (navigator.getStrategy() == INavigator.Strategy.NONE) {
             return;
         }
-        if(navigator.getStrategy() == INavigator.Strategy.POP){
+        if (navigator.getStrategy() == INavigator.Strategy.POP) {
             popFragment();
-            return;
-        }
-        if(navigator.getStrategy() == INavigator.Strategy.CUSTOM){
-            navigator.onCustomNavigate(this);
             return;
         }
         if (navigator.getFragment() == null) return;

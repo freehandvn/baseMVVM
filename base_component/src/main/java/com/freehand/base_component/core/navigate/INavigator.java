@@ -22,5 +22,5 @@ public interface INavigator {
 
     void onCustomNavigate(BaseActivity activity);
 
-    enum Strategy {NONE, ADD, REPLACE, OVERLAP, POP, CUSTOM}
+    enum Strategy {NONE, ADD, REPLACE, OVERLAP, POP}
 }

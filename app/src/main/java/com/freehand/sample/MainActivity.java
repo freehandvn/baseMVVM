@@ -1,6 +1,7 @@
 package com.freehand.sample;
 
 import com.freehand.base_component.core.activity.BaseActivity;
+import com.freehand.base_component.core.logger.Logger;
 import com.freehand.base_component.core.navigate.NavigateManager;
 import com.freehand.base_component.core.navigate.Navigator;
 
@@ -13,7 +14,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        Logger.log().trace("MainActivity");
         NavigateManager.navigate(Navigator.make().fragment(FrgOption.class).enableBack());
+        Logger.log().d("MainActivity","debug");
     }
 
     @Override

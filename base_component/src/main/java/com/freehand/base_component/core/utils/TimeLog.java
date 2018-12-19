@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Created by minhpham on 1/2/18.
- * Purpose: util support log time
+ * Purpose: util support d time
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
 public class TimeLog {
@@ -31,7 +31,7 @@ public class TimeLog {
         long startTime = System.currentTimeMillis();
         long preCount = 0;
         data.put(key, new Pair<>(startTime, preCount));
-        Log.d(TAG, key +" content: "+content+ " start log time at: " + startTime);
+        Log.d(TAG, key +" content: "+content+ " start d time at: " + startTime);
     }
 
     public void logTime(String key){
@@ -42,7 +42,7 @@ public class TimeLog {
         long time = System.currentTimeMillis();
         Pair<Long, Long> temp = data.get(key);
         if(temp==null) return;
-        Log.d(TAG, key +" content: "+content+ " log time at: " + time);
+        Log.d(TAG, key +" content: "+content+ " d time at: " + time);
         Log.d(TAG, key +" content: "+content+  " time spent: " + (time - temp.first)
                 + ((temp.second > 0) ? " after: " + (time - temp.first - temp.second) : ""));
         data.put(key, new Pair<>(temp.first, time - temp.first));

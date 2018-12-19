@@ -8,11 +8,6 @@ package com.freehand.base_component.core.logger;
 public class Logger {
     private static ILog defaultLog = new NonLog();
 
-    public static void setDebugDefaultLog() {
-        defaultLog = new DebugLog();
-    }
-
-
     public static void setDefaultLog(ILog log) {
         defaultLog = log;
     }

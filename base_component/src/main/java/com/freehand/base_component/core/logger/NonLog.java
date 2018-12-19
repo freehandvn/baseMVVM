@@ -37,4 +37,12 @@ public class NonLog implements ILog {
     public void trace(String tag) {
 
     }
+
+    /**
+     * export all log
+     */
+    @Override
+    public void export() {
+
+    }
 }

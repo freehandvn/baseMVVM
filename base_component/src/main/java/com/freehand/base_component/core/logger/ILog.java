@@ -25,4 +25,9 @@ public interface ILog {
      * @param tag
      */
     void trace(String tag);
+
+    /**
+     * export all log
+     */
+    void export();
 }

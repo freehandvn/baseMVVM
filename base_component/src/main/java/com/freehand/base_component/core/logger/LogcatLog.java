@@ -7,7 +7,7 @@ import android.util.Log;
  * Purpose: .
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
-public class DebugLog implements ILog {
+public class LogcatLog implements ILog {
     /**
      * d normal message
      *
@@ -46,6 +46,14 @@ public class DebugLog implements ILog {
                     + "============End trace============="
             );
         }
+    }
+
+    /**
+     * export all log
+     */
+    @Override
+    public void export() {
+
     }
 
     private static String buildStackTraceString(final StackTraceElement[] elements) {

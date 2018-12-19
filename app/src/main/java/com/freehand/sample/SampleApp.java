@@ -1,5 +1,6 @@
 package com.freehand.sample;
 
+import com.freehand.base_component.core.logger.LogcatLog;
 import com.freehand.base_component.core.logger.Logger;
 import com.freehand.dynamicfunction.DynamicFunctionService;
 import com.freehand.fetcher.FetcherConfig;
@@ -21,7 +22,7 @@ public class SampleApp extends RealmApplication {
         FetcherConfig.getInstance().addDefaultReponseInterceptor(new StoreInterceptor());
         DynamicFunctionService.enableLog(true);
         if(BuildConfig.DEBUG) {
-            Logger.setDebugDefaultLog();
+            Logger.setDefaultLog(new LogcatLog());
         }
     }
 }

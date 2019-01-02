@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -57,6 +58,15 @@ public class BaseAdapterBinding {
         }
     }
 
+    @BindingAdapter("setStateVM")
+    public static void setStateVM(View view, IStateVM vm) {
+        if (!(view instanceof IStatefulView)) return;
+        IStatefulView statefulView = (IStatefulView) view;
+        statefulView.addStateVM(vm);
+//        statefulView.showState(vm.showStateObservable());
+//        statefulView.hideState(vm.hideStateObservable());
+//        statefulView.setBinding(vm.bindingObservable());
+    }
 
 
     @BindingAdapter("addViewmodel")

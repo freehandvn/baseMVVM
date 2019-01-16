@@ -104,5 +104,23 @@ public abstract class RealmVM extends BaseViewModel implements IRealmVM{
         return listener;
     }
 
+    @Override
+    public void unpause() {
+        super.unpause();
+        if(listenerMap!=null && listenerMap.size()>0){
+            for(IRealmListener listener : listenerMap.values()){
+                listener.unpause();
+            }
+        }
+    }
 
+    @Override
+    public void pause() {
+        super.pause();
+        if(listenerMap!=null && listenerMap.size()>0){
+            for(IRealmListener listener : listenerMap.values()){
+                listener.pause();
+            }
+        }
+    }
 }

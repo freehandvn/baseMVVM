@@ -11,4 +11,8 @@ public interface IRealmListener<O> {
     Observable<O> getOuput();
 
     void destroy();
+
+    void pause();
+
+    void unpause();
 }

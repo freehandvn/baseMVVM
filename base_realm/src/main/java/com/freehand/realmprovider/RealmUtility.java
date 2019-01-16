@@ -129,31 +129,6 @@ public class RealmUtility {
         }
     }
 
-    /**
-     * Find first row that is matching with query after doing sort by order.
-     *
-     * @param clazz
-     * @param condition
-     * @param fieldName
-     * @param sortOrder
-     * @param <T>
-     * @return
-     */
-    public static <T extends RealmObject> T findFirstSortedSync(Class<T> clazz, String fieldName, Sort sortOrder, @Nullable IRealmCondition<T> condition) {
-        try (Realm realm = realmProvider.getRealm()) {
-            RealmQuery<T> query = realm.where(clazz);
-            if (condition != null) {
-                query = condition.condition(query);
-            }
-            RealmResults<T> result = query.sort(fieldName, sortOrder).findAll();
-            if (result == null || result.size() == 0) return null;
-            T entity = result.first();
-            return entity == null ? null : realm.copyFromRealm(entity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     /**
      * @param condition

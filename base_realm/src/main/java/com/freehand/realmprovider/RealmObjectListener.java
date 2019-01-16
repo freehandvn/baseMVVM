@@ -1,11 +1,12 @@
 package com.freehand.realmprovider;
 
-import javax.annotation.Nullable;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.realm.ObjectChangeSet;
-import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.RealmObjectChangeListener;
 
@@ -18,16 +19,40 @@ public class RealmObjectListener<T extends RealmObject> implements IRealmListene
 
     private T realObject;
     private PublishSubject<ObjectChangeSet> channel = PublishSubject.create();
-    private RealmObjectChangeListener<T> listener = (t,changeSet)-> channel.onNext(changeSet);
+    private Observable<ObjectChangeSet> output;
+    private AtomicInteger obseverCount = new AtomicInteger(0);
+    private AtomicBoolean pauseflag = new AtomicBoolean(false);
+    private ObjectChangeSet lastedChange = null;
+    private RealmObjectChangeListener<T> listener = (t, changeSet) -> {
+        if(pauseflag.get()){
+            lastedChange = changeSet;
+            return;
+        }
+        channel.onNext(changeSet);
+    };
 
     public RealmObjectListener(T realmObject) {
         this.realObject = realmObject;
-        realmObject.addChangeListener(listener);
+        output = channel.doOnDispose(() -> {
+            if (obseverCount.get() > 0) {
+                int count = obseverCount.decrementAndGet();
+                if (count == 0) {
+                    realmObject.removeChangeListener(listener);
+                }
+            }
+        }).doOnSubscribe(disposable -> {
+            if (obseverCount.get() == 0) {
+                //subscribe
+                realmObject.addChangeListener(listener);
+            } else {
+                obseverCount.incrementAndGet();
+            }
+        }).doOnError(throwable -> realmObject.removeChangeListener(listener));
     }
 
     @Override
     public Observable getOuput() {
-        return channel;
+        return output;
     }
 
     @Override
@@ -37,5 +62,19 @@ public class RealmObjectListener<T extends RealmObject> implements IRealmListene
         channel.onComplete();
         channel = null;
         listener = null;
+        output = null;
+    }
+
+    @Override
+    public void pause() {
+        pauseflag.set(true);
+    }
+
+    @Override
+    public void unpause() {
+        pauseflag.set(false);
+        if(channel!=null && lastedChange!=null){
+            channel.onNext(lastedChange);
+        }
     }
 }

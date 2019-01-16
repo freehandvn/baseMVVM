@@ -1,9 +1,9 @@
 package com.freehand.sample;
 
-import com.freehand.base_component.core.logger.LogcatLog;
-import com.freehand.base_component.core.logger.Logger;
 import com.freehand.dynamicfunction.DynamicFunctionService;
 import com.freehand.fetcher.FetcherConfig;
+import com.freehand.logger.LogcatLog;
+import com.freehand.logger.Logger;
 import com.freehand.realmprovider.RealmApplication;
 import com.freehand.realmprovider.RealmProvider;
 import com.freehand.realmprovider.RealmUtility;

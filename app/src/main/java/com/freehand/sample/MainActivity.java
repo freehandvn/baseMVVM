@@ -1,11 +1,10 @@
 package com.freehand.sample;
 
 import com.freehand.base_component.core.activity.BaseActivity;
-import com.freehand.base_component.core.logger.Logger;
 import com.freehand.base_component.core.navigate.NavigateManager;
 import com.freehand.base_component.core.navigate.Navigator;
+import com.freehand.logger.Logger;
 
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 

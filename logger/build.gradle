@@ -1,11 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'realm-android'
 
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.freehandvn/baseMVVM'
 
 android {
     compileSdkVersion 28
+
+
 
     defaultConfig {
         minSdkVersion 14
@@ -17,6 +18,11 @@ android {
 
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -24,22 +30,11 @@ android {
         }
     }
 
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
 }
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:${v7_version}"
     testImplementation "junit:junit:${junit}"
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation "io.reactivex.rxjava2:rxjava:${rxjava_version}"
-    implementation "io.reactivex.rxjava2:rxandroid:${rxandroid_version}"
-    api project(':base_component')
-    implementation project(':logger')
 }

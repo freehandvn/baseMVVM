@@ -1,4 +1,4 @@
-package com.freehand.base_component.core.logger;
+package com.freehand.logger;
 
 import android.util.Log;
 

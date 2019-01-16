@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/base_realm" />
             <option value="$PROJECT_DIR$/dynamicfunction" />
             <option value="$PROJECT_DIR$/fetcher" />
+            <option value="$PROJECT_DIR$/logger" />
             <option value="$PROJECT_DIR$/oauth2" />
           </set>
         </option>

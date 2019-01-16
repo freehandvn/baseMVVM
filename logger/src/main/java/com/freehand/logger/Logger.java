@@ -1,4 +1,4 @@
-package com.freehand.base_component.core.logger;
+package com.freehand.logger;
 
 /**
  * Created by minhpham on 12/19/18.

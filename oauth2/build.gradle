@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
-
 apply plugin: 'com.github.dcendents.android-maven'
+
+apply plugin: 'kotlin-android'
 group='com.github.freehandvn/baseMVVM'
 android {
     compileSdkVersion 28
@@ -39,4 +40,5 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${v7_version}"
     implementation 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
     implementation project(':logger')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

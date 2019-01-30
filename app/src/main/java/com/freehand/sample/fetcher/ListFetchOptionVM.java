@@ -36,13 +36,9 @@ public class ListFetchOptionVM extends RealmVM {
     }
 
     public void onFetchDoon(View v) {
-        addDisposable(fetcherMR.getOutput().subscribe(new Consumer<FetcherResult<MultipleResource<Datum>>>() {
-            @Override
-            public void accept(FetcherResult<MultipleResource<Datum>> result) throws Exception {
-                Log.d("minh", "accept: ");
-            }
-        }));
-        Observable<MultipleResource<Datum>> temp = retrofit.doGetUserList("2");
+        addDisposable(fetcherMR.getOutput().subscribe(result ->
+                Log.d("minh", "accept: ")));
+//        Observable<MultipleResource<Datum>> temp = retrofit.doGetUserList("2");
         fetcherMR.fetch(retrofit.doGetUserList("2"));
     }
 

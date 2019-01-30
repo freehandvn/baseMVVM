@@ -1,16 +1,21 @@
 package com.freehand.sample;
 
+import android.os.Handler;
+import android.util.Log;
+
 import com.freehand.base_component.core.activity.BaseActivity;
 import com.freehand.base_component.core.navigate.NavigateManager;
 import com.freehand.base_component.core.navigate.Navigator;
 import com.freehand.logger.Logger;
 
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 
 public class MainActivity extends BaseActivity {
 
-    private int count = -1;
+    private int count = 0;
+    PublishSubject<Object> observable;
 
     @Override
     protected int getFragmentContainerResId() {
@@ -22,20 +27,25 @@ public class MainActivity extends BaseActivity {
         Logger.log().trace("MainActivity");
         NavigateManager.navigate(Navigator.make().fragment(FrgOption.class).enableBack());
         Logger.log().d("MainActivity", "debug");
-        testOb();
+        observable = PublishSubject.create();
+        Disposable dis1 = getOut().subscribe();
+        Disposable dis2 = getOut().subscribe();
+        Disposable dis3 = getOut().subscribe();
+        dis1.dispose();
+        dis2.dispose();
+        new Handler().postDelayed(() -> dis3.dispose(), 2000);
     }
 
 
-    private void testOb() {
-        PublishSubject<Object> observable = PublishSubject.create();
-        observable.observeOn(Schedulers.computation())
-//                .toFlowable(BackpressureStrategy.LATEST)
-                .subscribe(i -> Logger.log().d("minh", ": " + i)
-                        , throwable -> Logger.log().e("error", throwable));
-
-        for (int i = 0; i < 1000000; i++) {
-            observable.onNext(i);
-        }
+    private Observable getOut() {
+        return observable
+                .doOnSubscribe(disposable -> count++)
+                .doOnDispose(() -> {
+                    count--;
+                    if (count <= 0) {
+                        Log.d("minh", "testOb: come " +count);
+                    }
+                }).cache();
     }
 
     @Override

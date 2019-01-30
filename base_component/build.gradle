@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'kotlin-android'
 
 group='com.github.freehandvn/baseMVVM'
 android {
@@ -44,5 +45,6 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:${v7_version}"
     api project(':dynamicfunction')
     implementation project(':logger')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 

@@ -25,8 +25,11 @@ public interface APIInterface {
     @POST("/api/users")
     Observable<User> createUser(@Body User user);
 
+    @GET("/api/users/23")
+    Observable<User> ghostUser();
+
     @GET("/api/users?")
-    Observable<MultipleResource<Datum>> doGetUserList(@Query("page") String page);
+    Observable<MultipleResource<Datum>> doGetUserList(@Query("page") int page);
 
     @FormUrlEncoded
     @POST("/api/users?")

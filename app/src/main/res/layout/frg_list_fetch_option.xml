@@ -23,8 +23,8 @@
         <Button
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:onClick="@{vm::onFetchDatum}"
-            android:text="Fetch Datum" />
+            android:onClick="@{vm::onErrorApi}"
+            android:text="Error API" />
 
         <Button
             android:layout_width="200dp"

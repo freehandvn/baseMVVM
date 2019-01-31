@@ -1,7 +1,5 @@
 package com.freehand.sample;
 
-import android.util.Log;
-
 import com.freehand.dynamicfunction.DynamicFunctionService;
 import com.freehand.fetcher.FetcherConfig;
 import com.freehand.fetcher.FetcherErrorCallback;
@@ -10,7 +8,6 @@ import com.freehand.logger.Logger;
 import com.freehand.realmprovider.RealmApplication;
 import com.freehand.realmprovider.RealmProvider;
 import com.freehand.realmprovider.RealmUtility;
-import com.freehand.sample.api.StoreInterceptor;
 
 /**
  * Created by minhpham on 12/3/18.
@@ -22,16 +19,15 @@ public class SampleApp extends RealmApplication {
     public void onCreate() {
         super.onCreate();
         RealmUtility.realmProvider = new RealmProvider(this,"SampleDB");
-        FetcherConfig.getInstance().addDefaultReponseInterceptor(new StoreInterceptor());
-        FetcherConfig.getInstance().addErrorHandle(new FetcherErrorCallback() {
+        FetcherConfig.INSTANCE.addErrorHandle(new FetcherErrorCallback() {
             @Override
             public void onError(Throwable throwable) {
-                throwable.printStackTrace();
+               Logger.log().e("minh1",throwable);
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                Log.d("minh", "onError: "+errorCode+" message: "+message);
+               Logger.log().d("minh",message);
             }
         });
         DynamicFunctionService.enableLog(true);

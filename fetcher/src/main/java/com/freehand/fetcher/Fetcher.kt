@@ -79,7 +79,7 @@ import io.reactivex.subjects.PublishSubject
 
     private fun getExecuteObservable(input: I): Observable<O>? {
 
-        val api = preProcessFetcher(input).concatMap { input -> createApiObservable(input) } ?: return Observable.empty()
+        val api = preProcessFetcher(input).concatMap { createApiObservable(it) } ?: return Observable.empty()
 
         return api
                 .observeOn(Schedulers.io())

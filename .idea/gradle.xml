@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/fetcher" />
             <option value="$PROJECT_DIR$/logger" />
             <option value="$PROJECT_DIR$/oauth2" />
+            <option value="$PROJECT_DIR$/submitter" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -8,5 +8,9 @@ import io.reactivex.Completable
  * Copyright © 2019 Pham Duy Minh. All rights reserved.
  */
 interface IGroupSubmit {
-    fun getGroupSubmit(submit:ISubmitter):Completable
+
+    fun isStable(): Boolean
+
+    fun getSubmitChannel():Completable
+    fun pause()
 }

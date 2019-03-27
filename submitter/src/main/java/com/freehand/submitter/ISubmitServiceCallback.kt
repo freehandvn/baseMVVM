@@ -20,7 +20,7 @@ interface ISubmitServiceCallback {
     /**
      * define the way to get stable group which not in-processing, not pause, not error
      */
-    fun getStableGroup(): IGroupSubmit
+    fun getStableGroup(): IGroupSubmit?
 
     /**
      * reset all submit has error, pause to stable group, ready for re-submit

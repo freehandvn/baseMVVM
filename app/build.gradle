@@ -38,5 +38,6 @@ dependencies {
     implementation project(':fetcher')
     implementation project(':base_realm')
     implementation project(':logger')
+    implementation project(':submitter')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

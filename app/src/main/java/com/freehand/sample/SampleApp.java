@@ -8,6 +8,7 @@ import com.freehand.logger.Logger;
 import com.freehand.realmprovider.RealmApplication;
 import com.freehand.realmprovider.RealmProvider;
 import com.freehand.realmprovider.RealmUtility;
+import com.freehand.submitter.SubmitManager;
 
 /**
  * Created by minhpham on 12/3/18.
@@ -34,5 +35,6 @@ public class SampleApp extends RealmApplication {
         if(BuildConfig.DEBUG) {
             Logger.setDefaultLog(new LogcatLog());
         }
+
     }
 }

@@ -10,12 +10,12 @@ object SubmitManager {
     private lateinit var submitService: SubmitService
     private var initted = false
 
-    open fun init(callback: ISubmitServiceCallback) {
+    fun init(callback: ISubmitServiceCallback) {
         submitService = SubmitService(callback)
         initted = true
     }
 
-    open fun getService(): SubmitService {
+    fun getService(): SubmitService {
         if (!initted) throw Exception("You must call init first, recommend call it in application")
         return submitService
     }

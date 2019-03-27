@@ -34,11 +34,13 @@ class SubmitService(callback: ISubmitServiceCallback) {
         checkAndRun(submitCallback.getStableGroup())
     }
 
-    private fun checkAndRun(stableGroup: IGroupSubmit) {
+    private fun checkAndRun(stableGroup: IGroupSubmit?) {
         if (isStop) return
         val inProcessing = countProcessing()
         if (inProcessing >= MAXPROCESS) return
-        processQueue[stableGroup] = executeSubmit(stableGroup)
+        stableGroup?.let{
+            processQueue[it] = executeSubmit(it)
+        }
     }
 
     private fun countProcessing(): Int {

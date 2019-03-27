@@ -1,6 +1,7 @@
 package com.freehand.submitter
 
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -9,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Copyright © 2019 Pham Duy Minh. All rights reserved.
  */
 class SubmitService(callback: ISubmitServiceCallback) {
-    private var processQueue: MutableMap<IGroupSubmit, Disposable?>? = null
+    private val processQueue = ConcurrentHashMap<IGroupSubmit, Disposable>()
     private var isStop = false
     private val submitCallback = callback
     private val MAXPROCESS = callback.getThreadProgress()
@@ -18,18 +19,10 @@ class SubmitService(callback: ISubmitServiceCallback) {
      */
     fun submit(submitter: ISubmitter) {
         val group = submitCallback.getGroup(submitter)
-
-        processQueue?.let {
-            if (it.containsKey(group)) {
-                it[group]?.dispose()
-                it[group] = null
-            }
-        } ?: run {
-            processQueue = ConcurrentHashMap()
-            processQueue?.put(group, null)
-        }
-
-        checkAndRun()
+        // if running -> stop, reset status and run again
+        processQueue[group]?.dispose()
+        group.resetStatus()
+        checkAndRun(group)
     }
 
     /**
@@ -37,21 +30,19 @@ class SubmitService(callback: ISubmitServiceCallback) {
      */
     fun start() {
         isStop = false
-        processQueue = submitCallback.getPriorityGroup()
-        checkAndRun()
+        submitCallback.resetAllGroup()
+        checkAndRun(submitCallback.getStableGroup())
     }
 
-    private fun checkAndRun() {
+    private fun checkAndRun(stableGroup: IGroupSubmit) {
         if (isStop) return
         val inProcessing = countProcessing()
         if (inProcessing >= MAXPROCESS) return
-        getStableSubmit()?.let {
-            processQueue?.put(it, executeSubmit(it))
-        }
+        processQueue[stableGroup] = executeSubmit(stableGroup)
     }
 
     private fun countProcessing(): Int {
-        return processQueue?.let { it.values.count { disposable -> disposable != null } } ?: 0
+        return processQueue.size
     }
 
     private fun executeSubmit(stableSubmit: IGroupSubmit): Disposable {
@@ -60,28 +51,23 @@ class SubmitService(callback: ISubmitServiceCallback) {
                     afterProcess(stableSubmit)
                 }
                 .doOnError { afterProcess(stableSubmit) }
+                .subscribeOn(Schedulers.io())
                 .subscribe()
     }
 
     private fun afterProcess(group: IGroupSubmit) {
         // remove group from processing
-        processQueue?.remove(group)
-        checkAndRun()
+        processQueue.remove(group)
+        checkAndRun(submitCallback.getStableGroup())
     }
 
-    /**
-     * define the way to get stable group which not in-processing, not pause, not error
-     */
-    fun getStableSubmit(): IGroupSubmit?{
-        return processQueue?.filter { entry -> entry.value == null }?.filter { it.key.isStable() }?.keys?.first()
-    }
 
     /**
      * stop submit service, stop submit all object @ISubmitter in queue
      */
     fun stop() {
-        processQueue?.let { it.values.forEach { disposal -> disposal?.dispose() };it.clear() }
-        processQueue = null
+        processQueue.values.forEach { disposal -> disposal.dispose() }
+        processQueue.clear()
         isStop = true
     }
 
@@ -90,15 +76,8 @@ class SubmitService(callback: ISubmitServiceCallback) {
      */
     fun pause(submitter: ISubmitter) {
         val group = submitCallback.getGroup(submitter)
-        processQueue?.let {
-            if (it.containsKey(group)) {
-                it[group]?.dispose()
-                it[group] = null
-            }
-        } ?: run {
-            processQueue = ConcurrentHashMap()
-            processQueue?.put(group, null)
-        }
+        processQueue[group]?.dispose()
+        processQueue.remove(group)
         group.pause()
     }
 

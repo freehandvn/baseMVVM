@@ -1,8 +1,5 @@
 package com.freehand.submitter
 
-import io.reactivex.disposables.Disposable
-import java.util.concurrent.ConcurrentHashMap
-
 /**
  * Created by minhpham on 3/20/19.
  * Purpose: .
@@ -16,12 +13,17 @@ interface ISubmitServiceCallback {
     fun getGroup(submitter: ISubmitter): IGroupSubmit
 
     /**
-     * fetch all submit group by priority
-     */
-    fun getPriorityGroup(): ConcurrentHashMap<IGroupSubmit, Disposable?>
-
-    /**
      * define number of thread for process
      */
     fun getThreadProgress(): Int
+
+    /**
+     * define the way to get stable group which not in-processing, not pause, not error
+     */
+    fun getStableGroup(): IGroupSubmit
+
+    /**
+     * reset all submit has error, pause to stable group, ready for re-submit
+     */
+    fun resetAllGroup()
 }

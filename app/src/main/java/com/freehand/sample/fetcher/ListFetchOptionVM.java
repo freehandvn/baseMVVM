@@ -7,6 +7,8 @@ import android.widget.Toast;
 import com.freehand.fetcher.Fetcher;
 import com.freehand.logger.Logger;
 import com.freehand.realmprovider.RealmVM;
+import com.freehand.sample.BR;
+import com.freehand.sample.R;
 import com.freehand.sample.api.APIClient;
 import com.freehand.sample.api.APIInterface;
 import com.freehand.sample.db.Datum;
@@ -79,6 +81,16 @@ public class ListFetchOptionVM extends RealmVM {
         addDisposable(fetcherUL.getOutput().subscribe(userListFetcherResult -> Log.d("minh", "accept: ")));
         addDisposable(fetcherError.getOutput().subscribe(t -> Logger.log().d("minh", " has error: "
                 + t.isSuccess() + " error: " + t.toString() + " thread: " + Thread.currentThread().getName())));
+    }
+
+    @Override
+    public int defineLayoutDefault() {
+        return R.layout.frg_list_fetch_option;
+    }
+
+    @Override
+    public int defineVariableID() {
+        return BR.vm;
     }
 
     public void onFetchDoon(View v) {

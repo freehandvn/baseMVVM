@@ -10,19 +10,9 @@ import com.freehand.base_component.core.fragment.BaseFragmentBinding;
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
 public class FrgOption extends BaseFragmentBinding<ListOptionVM> {
-    @Override
-    protected int defineVariableID() {
-        return BR.vm;
-    }
-
     @NonNull
     @Override
     protected ListOptionVM onCreateViewModel() {
         return new ListOptionVM();
-    }
-
-    @Override
-    protected int defineLayout() {
-        return R.layout.frg_list_option;
     }
 }

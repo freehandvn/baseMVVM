@@ -24,6 +24,16 @@ public class OfflineLogVM extends RealmVM {
         notifyPropertyChanged(BR.log);
     }
 
+    @Override
+    public int defineLayoutDefault() {
+        return R.layout.frg_log;
+    }
+
+    @Override
+    public int defineVariableID() {
+        return BR.vm;
+    }
+
     @Bindable
     public String getLog() {
         if(data.size() == 0) return "empty";

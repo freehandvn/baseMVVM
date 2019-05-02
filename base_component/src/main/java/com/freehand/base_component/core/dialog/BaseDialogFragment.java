@@ -57,14 +57,10 @@ public abstract class BaseDialogFragment<T extends BaseViewModel & IDialogVM<O>,
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dataBinding = DataBindingUtil.inflate(inflater, defineLayout(), container, false);
-        dataBinding.setVariable(defineVariableID(), viewModel);
+        dataBinding = DataBindingUtil.inflate(inflater, viewModel.getLayoutID(), container, false);
+        dataBinding.setVariable(viewModel.getVariableID(), viewModel);
         return dataBinding.getRoot();
     }
-
-    protected abstract int defineVariableID();
-
-    protected abstract int defineLayout();
 
 //    @NonNull
 //    @Override

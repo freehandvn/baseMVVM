@@ -30,11 +30,6 @@ public abstract class RealmVM extends BaseViewModel implements IRealmVM{
     private Realm mRealm;
     private Map<Object,IRealmListener> listenerMap;
 
-
-    public RealmVM(IViewModel... models) {
-        super(models);
-    }
-
     public RealmVM() {
         super();
     }

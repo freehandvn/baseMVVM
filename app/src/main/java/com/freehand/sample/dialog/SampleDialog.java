@@ -14,16 +14,6 @@ import com.freehand.sample.R;
  */
 public class SampleDialog extends BaseDialogFragment<SampleDialogVM,String> {
     @Override
-    protected int defineVariableID() {
-        return BR.vm;
-    }
-
-    @Override
-    protected int defineLayout() {
-        return R.layout.dialog_sample;
-    }
-
-    @Override
     protected Point getSizePercentage() {
         return new Point(50,50);
     }

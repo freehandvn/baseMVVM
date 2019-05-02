@@ -28,17 +28,13 @@ public abstract class BaseViewModel extends BaseObservable implements IViewModel
     protected boolean isDestroy = false;
     private Set<Disposable> disposables;
     private boolean isPause = false;
-
-    public BaseViewModel(IViewModel... models) {
-        if (models == null || models.length == 0) {
-            viewModels = new ArrayList<>();
-        } else {
-            viewModels = new ArrayList<>(Arrays.asList(models));
-        }
-    }
+    private int layoutID;
+    private int variableID;
 
     public BaseViewModel() {
         viewModels = new ArrayList<>();
+        layoutID = defineLayoutDefault();
+        variableID = defineVariableID();
     }
 
     @Override
@@ -155,5 +151,29 @@ public abstract class BaseViewModel extends BaseObservable implements IViewModel
                 e.printStackTrace();
             }
         }
+    }
+
+    public int getLayoutID() {
+        return layoutID;
+    }
+
+    public void setLayoutID(int layoutID) {
+        this.layoutID = layoutID;
+    }
+
+    public abstract int defineLayoutDefault();
+
+    public abstract int defineVariableID();
+
+    public boolean handleBackPress() {
+        return false;
+    }
+
+    public int getVariableID() {
+        return variableID;
+    }
+
+    public void setVariableID(int variableID) {
+        this.variableID = variableID;
     }
 }

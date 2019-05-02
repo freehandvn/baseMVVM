@@ -28,14 +28,17 @@ public abstract class BaseFragmentBinding<T extends BaseViewModel> extends BaseF
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dataBinding = DataBindingUtil.inflate(inflater, defineLayout(), container, false);
-        dataBinding.setVariable(defineVariableID(), viewModel);
+        dataBinding = DataBindingUtil.inflate(inflater, viewModel.getLayoutID(), container, false);
+        dataBinding.setVariable(viewModel.getVariableID(), viewModel);
         View root = dataBinding.getRoot();
         initView(root);
         return root;
     }
 
-    protected abstract int defineVariableID();
+    @Override
+    protected int defineLayout() {
+        return 0;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -69,6 +72,11 @@ public abstract class BaseFragmentBinding<T extends BaseViewModel> extends BaseF
         viewModel.destroy();
         viewModel = null;
         Log.e(getName(), "onDetach");
+    }
+
+    @Override
+    public boolean handleBackPressed() {
+        return viewModel.handleBackPress();
     }
 
     public String getName() {

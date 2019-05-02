@@ -21,8 +21,8 @@ public abstract class BasePopover<V extends BaseViewModel> {
 
     public BasePopover(Context context) {
         V viewModel = createViewModel(context);
-        ViewDataBinding viewDataBinding = DataBindingUtil.inflate(LayoutInflater.from(context), defineLayout(), null, false);
-        viewDataBinding.setVariable(defineVariableID(), viewModel);
+        ViewDataBinding viewDataBinding = DataBindingUtil.inflate(LayoutInflater.from(context), viewModel.getLayoutID(), null, false);
+        viewDataBinding.setVariable(viewModel.getVariableID(), viewModel);
         popupWindow = new PopupWindow(viewDataBinding.getRoot(), defineWidth(), defineHeight(), true);
         popupWindow.setOutsideTouchable(dimissOutside());
     }
@@ -49,7 +49,4 @@ public abstract class BasePopover<V extends BaseViewModel> {
 
     protected abstract V createViewModel(Context context);
 
-    protected abstract int defineVariableID();
-
-    protected abstract int defineLayout();
 }

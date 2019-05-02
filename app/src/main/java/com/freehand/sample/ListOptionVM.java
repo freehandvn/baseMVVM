@@ -39,4 +39,14 @@ public class ListOptionVM extends RealmVM {
             }
         });
     }
+
+    @Override
+    public int defineLayoutDefault() {
+        return R.layout.frg_list_option;
+    }
+
+    @Override
+    public int defineVariableID() {
+        return BR.vm;
+    }
 }

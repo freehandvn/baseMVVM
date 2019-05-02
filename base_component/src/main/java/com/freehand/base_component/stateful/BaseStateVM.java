@@ -17,13 +17,6 @@ public abstract class BaseStateVM extends BaseViewModel implements IStateVM {
     private BehaviorSubject<Integer> hideState;
     private ReplaySubject<Object[]> bindingChannel;
 
-    public BaseStateVM(IViewModel... models) {
-        super(models);
-        showState = BehaviorSubject.create();
-        hideState = BehaviorSubject.create();
-        bindingChannel = ReplaySubject.create();
-    }
-
     public BaseStateVM() {
         super();
         showState = BehaviorSubject.create();

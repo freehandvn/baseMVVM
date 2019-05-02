@@ -24,8 +24,8 @@ public abstract class BaseStateFragment<T extends BaseStateVM> extends BaseFragm
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewDataBinding = DataBindingUtil.inflate(inflater, defineLayout(), container, false);
-        viewDataBinding.setVariable(defineVariableID(), viewModel);
+        viewDataBinding = DataBindingUtil.inflate(inflater, viewModel.getLayoutID(), container, false);
+        viewDataBinding.setVariable(viewModel.getVariableID(), viewModel);
         View root = viewDataBinding.getRoot();
         statefulView = getStatefulView(root);
         statefulView.addStateVM(viewModel);

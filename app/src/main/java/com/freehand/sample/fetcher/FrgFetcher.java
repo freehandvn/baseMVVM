@@ -12,10 +12,6 @@ import com.freehand.sample.R;
  * Copyright © 2018 Pham Duy Minh. All rights reserved.
  */
 public class FrgFetcher extends BaseFragmentBinding<ListFetchOptionVM> {
-    @Override
-    protected int defineVariableID() {
-        return BR.vm;
-    }
 
     @NonNull
     @Override

@@ -39,6 +39,10 @@ public class Navigator implements INavigator {
         return this;
     }
 
+    public void execute(){
+        NavigateManager.navigate(this);
+    }
+
     public Navigator fragment(OnGener<BaseFragment> frgGenner) {
         this.frgGenner = frgGenner;
         strategy = Strategy.ADD;

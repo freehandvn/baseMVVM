@@ -1,7 +1,6 @@
 package com.freehand.sample
 
 import com.freehand.base_component.core.activity.BaseActivity
-import com.freehand.base_component.core.navigate.NavigateManager
 import com.freehand.base_component.core.navigate.Navigator
 import com.freehand.logger.trace
 
@@ -15,7 +14,7 @@ class MainActivity : BaseActivity() {
 
     override fun initView() {
         trace("minh")
-        NavigateManager.navigate(Navigator.make().fragment(FrgOption::class.java).enableBack())
+        Navigator.make().fragment(FrgOption::class.java).enableBack().execute()
     }
 
     override fun defineLayout(): Int {

@@ -1,7 +1,10 @@
 package com.freehand.logger
 
-fun log(tag:String,message:String){
+fun logd(tag:String,message:String){
     Logger.log().d(tag,message)
+}
+fun loge(tag:String,error:Throwable){
+    Logger.log().e(tag,error)
 }
 
 fun trace(tag:String){
